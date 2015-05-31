@@ -28,7 +28,7 @@ test.ndf:
 ```csharp
 #version 1
 val Name = "Blah";
-var Languages = ["English", "German];
+var Languages = ["English", "German"];
 
 object English : Language {
   val Author = "Alan";
