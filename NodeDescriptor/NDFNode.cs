@@ -6,10 +6,20 @@ using System.Text;
 
 namespace NodeDescriptor
 {
+    /// <summary>
+    /// The base NDF node.
+    /// </summary>
     public abstract class NDFNode
     {
-        #region Fields
+        #region Fields        
+        /// <summary>
+        /// The key.
+        /// </summary>
         protected string key;
+
+        /// <summary>
+        /// The value.
+        /// </summary>
         protected object val;
         #endregion
 
@@ -47,6 +57,9 @@ namespace NodeDescriptor
         #endregion
     }
 
+    /// <summary>
+    /// The key value node.
+    /// </summary>
     public class NDFKeyValueNode : NDFNode
     {
         #region Fields
@@ -291,6 +304,9 @@ namespace NodeDescriptor
         #endregion
     }
 
+    /// <summary>
+    /// The object node.
+    /// </summary>
     public class NDFObjectNode : NDFNode
     {
         #region Fields

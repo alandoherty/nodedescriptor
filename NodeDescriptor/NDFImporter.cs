@@ -3,6 +3,9 @@ using System.IO;
 
 namespace NodeDescriptor
 {
+    /// <summary>
+    /// The importer interface.
+    /// </summary>
     public interface NDFImporter
     {
         /// <summary>
@@ -13,6 +16,9 @@ namespace NodeDescriptor
         string Import(string path);
     }
 
+    /// <summary>
+    /// An empty importer, returns a preprocessor error.
+    /// </summary>
     public class NDFEmptyImporter : NDFImporter
     {
         #region Fields
@@ -21,7 +27,7 @@ namespace NodeDescriptor
         #region Properties
         #endregion
 
-        #region Methods                
+        #region Methods
         /// <summary>
         /// Imports the NDF from the specified path.
         /// </summary>
@@ -33,6 +39,9 @@ namespace NodeDescriptor
         #endregion
     }
 
+    /// <summary>
+    /// A generic importer that uses the file system.
+    /// </summary>
     public class NDFFileImporter : NDFImporter
     {
         #region Fields
@@ -120,6 +129,9 @@ namespace NodeDescriptor
         #endregion
     }
 
+    /// <summary>
+    /// An importer which calls a function each time a file is imported.
+    /// </summary>
     public class NDFFuncImporter : NDFImporter {
         #region Fields
         private Func<string, string> func = null;

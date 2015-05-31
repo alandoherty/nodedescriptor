@@ -5,6 +5,9 @@ using System.Text;
 
 namespace NodeDescriptor
 {
+    /// <summary>
+    /// The node descriptor format class.
+    /// </summary>
     public class NDF
     {
         #region Constants
@@ -211,18 +214,34 @@ namespace NodeDescriptor
         #endregion
     }
 
+    /// <summary>
+    /// The mode of serialization/deserialization.
+    /// </summary>
     public enum NDFMode
     {
+        /// <summary>
+        /// The binary format.
+        /// </summary>
         Binary,
+
+        /// <summary>
+        /// The ASCII format.
+        /// </summary>
         ASCII
     }
 
+    /// <summary>
+    /// The type of node, used in the binary format.
+    /// </summary>
     enum NDFNodeType : byte
     {
         KeyValue = 0,
         Object = 1
     }
 
+    /// <summary>
+    /// The type of value, used in the binary format.
+    /// </summary>
     enum NDFValueType : byte
     {
         String,
