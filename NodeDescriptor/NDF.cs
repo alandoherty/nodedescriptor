@@ -21,6 +21,18 @@ namespace NodeDescriptor
         private string path = null;
         #endregion
 
+        #region Properties        
+        /// <summary>
+        /// Gets the nodes.
+        /// </summary>
+        /// <value>The nodes.</value>
+        public Dictionary<string, NDFNode> Nodes {
+            get {
+                return nodes;
+            }
+        }
+        #endregion
+
         #region Methods
         /// <summary>
         /// Deserializes the NDF data from binary form.
