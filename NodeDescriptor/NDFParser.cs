@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NodeDescriptor.Nodes;
+using System;
 using System.Collections.Generic;
 
 namespace NodeDescriptor
@@ -50,7 +51,21 @@ namespace NodeDescriptor
         }
         #endregion
 
-        #region Methods
+        #region Methods        
+        /// <summary>
+        /// Gets the current token, or previous if current is null.
+        /// </summary>
+        /// <returns></returns>
+        private NDFToken Current()  {
+            if (c == null)
+                if (last == null)
+                    throw new Exception("Parser error, tried to get token when none available");
+                else
+                    return last;
+            else
+                return c;
+        }
+
         /// <summary>
         /// Peek the next token.
         /// </summary>
@@ -374,7 +389,7 @@ namespace NodeDescriptor
         /// <param name="c">The token.</param>
         /// <param name="err">The error.</param>
         private void Error(NDFToken c, string err) {
-            throw new Exception(err + " near " + source + ":" + c.Line);
+            throw new Exception(err + " near " + source + ":" + Current().Line);
         }
         
         /// <summary>
@@ -386,7 +401,7 @@ namespace NodeDescriptor
             if (c == null)
                 Error(last, "Expected " + type.ToString().ToLower() + " but reached end of stream");
 
-            throw new Exception("Unexpected " + c.Type.ToString().ToLower() + " '" + c.Value + "', expected " + type.ToString() + " near " + source + ":" + c.Line);
+            throw new Exception("Unexpected " + Current().Type.ToString().ToLower() + " '" + Current().Value + "', expected " + type.ToString() + " near " + source + ":" + c.Line);
         }
 
         /// <summary>
@@ -397,7 +412,7 @@ namespace NodeDescriptor
             if (c == null)
                 Error(last, "Unexpected end of stream");
 
-            throw new Exception("Unexpected " + c.Type.ToString().ToLower() + " '" + c.Value + "' near " + source + ":" + c.Line);
+            throw new Exception("Unexpected " + Current().Type.ToString().ToLower() + " '" + Current().Value + "' near " + source + ":" + c.Line);
         }
 
         /// <summary>
@@ -405,7 +420,7 @@ namespace NodeDescriptor
         /// </summary>
         /// <param name="err">The error.</param>
         private void Error(string err) {
-            Error(c, err);
+            Error(Current(), err);
         }
 
         /// <summary>
@@ -413,14 +428,14 @@ namespace NodeDescriptor
         /// </summary>
         /// <param name="type">The expected type.</param>
         private void Error(NDFTokenType type) {
-            Error(c, type);
+            Error(Current(), type);
         }
 
         /// <summary>
         /// Throws an unexpected token error for the current token.
         /// </summary>
         private void Error() {
-            Error(c);
+            Error(Current());
         }
         #endregion
 

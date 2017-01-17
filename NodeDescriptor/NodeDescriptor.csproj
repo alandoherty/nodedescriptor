@@ -39,10 +39,16 @@
     <Compile Include="NDFNode.cs" />
     <Compile Include="NDFParser.cs" />
     <Compile Include="NDFPreprocessor.cs" />
+    <Compile Include="NDFSerializer.cs" />
     <Compile Include="NDFToken.cs" />
     <Compile Include="NDFTokenizer.cs" />
+    <Compile Include="Nodes\NDFKeyValueNode.cs" />
+    <Compile Include="Nodes\NDFObjectNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Serializers\NDFASCIISerializer.cs" />
+    <Compile Include="Serializers\NDFBinarySerializer.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

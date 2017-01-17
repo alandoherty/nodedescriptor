@@ -1,4 +1,6 @@
-﻿using System;
+﻿using NodeDescriptor.Nodes;
+using NodeDescriptor.Serializers;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -16,6 +18,8 @@ namespace NodeDescriptor
         #endregion
 
         #region Fields
+        private static Dictionary<Type, NDFSerializer> Serializers = null;
+
         private Dictionary<string, NDFNode> nodes = null;
         private NDFImporter importer = null;
         private string path = null;
@@ -30,6 +34,32 @@ namespace NodeDescriptor
             get {
                 return nodes;
             }
+            internal set {
+                this.nodes = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the importer.
+        /// </summary>
+        /// <value>The importer.</value>
+        public NDFImporter Importer {
+            get {
+                return importer;
+            }
+            set {
+                this.importer = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets the path.
+        /// </summary>
+        /// <value>The path.</value>
+        public string Path {
+            get {
+                return path;
+            }
         }
         #endregion
 
@@ -39,15 +69,7 @@ namespace NodeDescriptor
         /// </summary>
         /// <param name="stream">The stream.</param>
         private void DeserializeBinary(Stream stream) {
-            // reader
-            BinaryReader reader = new BinaryReader(stream);
-
-            // header
-            if (Encoding.ASCII.GetString(reader.ReadBytes(3)) != MAGIC)
-                throw new InvalidDataException("The NDF magic is invalid");
-
-            if (reader.ReadInt32() != VERSION)
-                throw new InvalidDataException("The NDF version is invalid");
+            Serializers[typeof(NDFBinarySerializer)].Deserialize(this, stream);
         }
 
         /// <summary>
@@ -55,32 +77,7 @@ namespace NodeDescriptor
         /// </summary>
         /// <param name="stream">The stream.</param>
         private void DeserializeASCII(Stream stream) {
-            StreamReader reader = new StreamReader(stream);
-
-            // get importer
-            NDFImporter ppImporter = (this.importer == null) ? new NDFEmptyImporter() : null;
-
-            if (this.importer == null && path != null)
-                ppImporter = new NDFFileImporter(Path.GetDirectoryName(Path.GetFullPath(path)));
-
-            // source
-            string source = (path == null) ? "[Stream]" : Path.GetFileName(path);
-
-            // preprocess
-            NDFPreprocessor preprocessor = new NDFPreprocessor(reader.ReadToEnd(), ppImporter, source);
-            preprocessor.Preprocess();
-
-            // tokenize
-            NDFTokenizer tokenizer = new NDFTokenizer(preprocessor.Output, source);
-            tokenizer.Tokenize();
-
-            // parse
-            NDFParser parser = new NDFParser(tokenizer.Output, source);
-            parser.Parse();
-
-            // output
-            foreach (NDFNode node in parser.Output)
-                nodes.Add(node.Key, node);
+            Serializers[typeof(NDFASCIISerializer)].Deserialize(this, stream);
         }
 
         /// <summary>
@@ -88,55 +85,7 @@ namespace NodeDescriptor
         /// </summary>
         /// <param name="stream">The stream.</param>
         private void SerializeBinary(Stream stream) {
-            // writer
-            BinaryWriter writer = new BinaryWriter(stream);
-
-            // header
-            writer.Write(Encoding.ASCII.GetBytes(MAGIC));
-            writer.Write(VERSION);
-
-            // commands
-            writer.Write((short)0);
-
-            // nodes
-            writer.Write(nodes.Count);
-
-            // flush
-            writer.Flush();
-
-            // serialize nodes
-            foreach (KeyValuePair<string, NDFNode> kv in nodes) {
-                // type
-                if (kv.Value is NDFKeyValueNode)
-                    writer.Write((byte)NDFNodeType.KeyValue);
-                else if (kv.Value is NDFObjectNode)
-                    writer.Write((byte)NDFNodeType.Object);
-                else
-                    throw new NotImplementedException("Node not implemented for binary serialization");
-
-                // length
-                long lengthPos = stream.Position;
-                writer.Write(0);
-
-                // serialize
-                kv.Value.Serialize(writer);
-
-                // store positon
-                long oldPos = stream.Position;
-
-                // calculate size
-                int length = (int)(oldPos - lengthPos);
-                
-                // seek and write length
-                stream.Seek(lengthPos, SeekOrigin.Begin);
-                writer.Write(length);
-
-                // seek to old
-                stream.Seek(oldPos, SeekOrigin.Begin);
-
-                // flush
-                writer.Flush();
-            }
+            Serializers[typeof(NDFBinarySerializer)].Serialize(this, stream);
         }
 
         /// <summary>
@@ -144,23 +93,7 @@ namespace NodeDescriptor
         /// </summary>
         /// <param name="stream">The stream.</param>
         private void SerializeASCII(Stream stream) {
-            // writer
-            StreamWriter writer = new StreamWriter(stream);
-
-            // version header
-            writer.WriteLine("#version " + VERSION);
-
-            // serialize nodes
-            foreach (KeyValuePair<string, NDFNode> kv in nodes) {
-                if (kv.Value is NDFKeyValueNode)
-                    writer.Write("val ");
-
-                kv.Value.Serialize(writer);
-                writer.Write(';');
-            }
-
-            // flush
-            writer.Flush();
+            Serializers[typeof(NDFASCIISerializer)].Serialize(this, stream);
         }
 
         /// <summary>
@@ -222,6 +155,16 @@ namespace NodeDescriptor
         /// </summary>
         public NDF() {
             this.nodes = new Dictionary<string, NDFNode>();
+        }
+
+        /// <summary>
+        /// Initializes the <see cref="NDF"/> class.
+        /// </summary>
+        static NDF() {
+            Serializers = new Dictionary<Type, NDFSerializer>() {
+                {typeof(NDFASCIISerializer), new NDFASCIISerializer()},
+                {typeof(NDFBinarySerializer), new NDFBinarySerializer()}
+            };
         }
         #endregion
     }

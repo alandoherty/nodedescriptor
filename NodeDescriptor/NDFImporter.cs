@@ -49,7 +49,7 @@ namespace NodeDescriptor
         private bool escapable = false;
         #endregion
 
-        #region Properties             
+        #region Properties
         /// <summary>
         /// Gets or sets the the root path.
         /// </summary>
@@ -83,7 +83,7 @@ namespace NodeDescriptor
         }
         #endregion
 
-        #region Methods        
+        #region Methods
         /// <summary>
         /// Imports the NDF file data from the specified path.
         /// </summary>
@@ -112,7 +112,7 @@ namespace NodeDescriptor
         }
         #endregion
 
-         #region Constructors        
+         #region Constructors
         /// <summary>
         /// Initializes a new instance of the <see cref="NDFFileImporter"/> class.
         /// </summary>
@@ -137,7 +137,7 @@ namespace NodeDescriptor
         private Func<string, string> func = null;
         #endregion
 
-        #region Properties        
+        #region Properties
         /// <summary>
         /// Gets or sets the function to execute on import.
         /// </summary>
@@ -152,7 +152,7 @@ namespace NodeDescriptor
         }
         #endregion
 
-        #region Methods        
+        #region Methods
         /// <summary>
         /// Imports the NDF file data from the specified path.
         /// </summary>
@@ -167,7 +167,7 @@ namespace NodeDescriptor
         }
         #endregion
 
-        #region Constructors        
+        #region Constructors
         /// <summary>
         /// Initializes a new instance of the <see cref="NDFFuncImporter"/> class.
         /// </summary>
